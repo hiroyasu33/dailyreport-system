@@ -59,12 +59,12 @@ public class EmployeeService {
 
         // パスワードチェック
         ErrorKinds result = employeePasswordCheck(employee);
-        if (ErrorKinds.HALFSIZE_ERROR != result) {
-            if (ErrorKinds.RANGECHECK_ERROR != result)
+        if (ErrorKinds.CHECK_OK != result) {
                 return result;
         }
 
         oldEmployee.setName(employee.getName());
+        oldEmployee.setPassword(employee.getPassword());
         oldEmployee.setRole(employee.getRole());
         LocalDateTime now = LocalDateTime.now();
         oldEmployee.setUpdatedAt(now);

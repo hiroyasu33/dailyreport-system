@@ -29,7 +29,7 @@ public class ReportController {
 
     // 日報一覧画面
     @GetMapping
-    public String list() {
+    public String list(Model model) {
 
 
         return "reports/list";
@@ -37,21 +37,21 @@ public class ReportController {
 
     // 日報詳細画面
     @GetMapping(value = "/1")
-    public String detail() {
+    public String detail(@PathVariable String code, Model model) {
 
         return "reports/detail";
     }
 
     /** 日報更新画面を表示 */
     @GetMapping("/1/update")
-    public String edit() {
+    public String edit(@PathVariable("code") String code, Model model, Employee employee) {
         // 日報更新画面に遷移
         return "reports/update";
     }
 
  // 日報新規登録画面
     @GetMapping(value = "/add")
-    public String create() {
+    public String create(@ModelAttribute Employee employee) {
 
         return "reports/new";
     }

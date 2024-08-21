@@ -21,30 +21,24 @@
                         <div class="card-body">
                             <form th:action="@{/reports/add}" th:object="${report}" th:method="post">
                                 <div class="wizard wizard-success mb-4">
-                                <div class="mb-3">
-                                        <label class="form-label" for="date">日付</label>
-                                        <p class="mb-1"></p>
-                                        <div class="col-md-7">
-                                            <input class="form-control" type="text" th:field="2023-09-06" th:errorclass="err" id="code">
-                                        </div>
+                                    <div class="mb-3">
+                                        <label class="form-label" for="report_date">日付</label>
+                                        <input class="form-control" type="date"
+                                            id="id">
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="name">氏名</label>
-                                       <td class="align-middle" th:text="煌木　太郎"></td>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="title">タイトル</label>
-                                        <p class="mb-1"></p>
-                                        <div class="col-md-7">
-                                            <input class="form-control" type="text" th:field="タイトル" th:errorclass="err" id="password">
-                                        </div>
+                                        <input class="form-control" type="text"
+                                            id="title">
                                     </div>
-                                     <div class="mb-3">
+                                    <div class="mb-3">
                                         <label class="form-label" for="content">内容</label>
-                                        <p class="mb-1"></p>
-                                        <div class="col-md-7">
-                                            <input class="form-control" type="text" th:field="内容" th:errorclass="err" id="password">
-                                        </div>
+                                        <textarea class="form-control" id="content"></textarea>
+
+
                                     </div>
 
                                 </div>

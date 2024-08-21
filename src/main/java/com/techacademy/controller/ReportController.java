@@ -29,23 +29,30 @@ public class ReportController {
 
     // 日報一覧画面
     @GetMapping
-    public String list(Model model) {
+    public String list() {
 
 
         return "reports/list";
     }
 
     // 日報詳細画面
-    @GetMapping(value = "/{id}/")
-    public String detail(@PathVariable int id, Model model) {
+    @GetMapping(value = "/1")
+    public String detail() {
 
         return "reports/detail";
     }
 
     /** 日報更新画面を表示 */
-    @GetMapping("/{id}/update/")
-    public String edit(@PathVariable("id") int id, Model model, Report report) {
-        // employee更新画面に遷移
+    @GetMapping("/1/update")
+    public String edit() {
+        // 日報更新画面に遷移
         return "reports/update";
+    }
+
+ // 日報新規登録画面
+    @GetMapping(value = "/add")
+    public String create() {
+
+        return "reports/new";
     }
 }

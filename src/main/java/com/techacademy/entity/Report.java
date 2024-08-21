@@ -27,6 +27,7 @@ public class Report {
     @NotEmpty
     private int id;
 
+
     // 日付
     @NotEmpty
     private Date reportDate;

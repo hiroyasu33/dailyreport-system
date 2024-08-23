@@ -16,49 +16,58 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.techacademy.constants.ErrorKinds;
 import com.techacademy.constants.ErrorMessage;
 
-import com.techacademy.entity.Employee;
 import com.techacademy.entity.Report;
 import com.techacademy.service.EmployeeService;
+import com.techacademy.service.ReportService;
 import com.techacademy.service.UserDetail;
 
 @Controller
 @RequestMapping("reports")
 public class ReportController {
 
+    private final ReportService reportService;
+
+    @Autowired
+    public ReportController(ReportService reportService) {
+        this.reportService = reportService;
+    }
+
     // 日報一覧画面
     @GetMapping
     public String list(Model model) {
 
-        model.addAttribute("listSize");
-        model.addAttribute("reportsList");
+        model.addAttribute("listSize", reportService.findAll().size());
+        model.addAttribute("reportsList", reportService.findAll());
 
         return "reports/list";
     }
 
     // 日報詳細画面
-    @GetMapping(value = "/1")
-    public String detail(Model model) {
+    @GetMapping(value = "/{id}")
+    public String detail(@PathVariable Integer id, Model model) {
 
-        model.addAttribute("report");
+        model.addAttribute("report", reportService.findById(id));
         return "reports/detail";
     }
 
     // 日報更新画面を表示
-    @GetMapping("/1/update")
-    public String edit(Model model, Report report) {
-        model.addAttribute("report");
+    @GetMapping("/{id}/update")
+    public String edit(@PathVariable("id") Integer id, Model model, Report report) {
+        model.addAttribute("report", reportService.findById(id));
         // 日報更新画面に遷移
         return "reports/update";
     }
 
     // 日報更新処理
-    @PostMapping("/1/update")
-    public String update(@Validated Report report, BindingResult res, Model model) {
+    @PostMapping("/{id}/update")
+    public String update(@PathVariable("id") Integer id, @Validated Report report, BindingResult res, Model model) {
 
      // 入力チェック
         if (res.hasErrors()) {
             return create(report);
         }
+
+        reportService.update(report, id);
         // 一覧画面にリダイレクト
         return "redirect:/reports";
 
@@ -88,8 +97,17 @@ public class ReportController {
 
 
     // 従業員削除処理
-    @PostMapping(value = "/1/delete")
-    public String delete(@AuthenticationPrincipal UserDetail userDetail, Model model) {
+    @PostMapping(value = "/{id}/delete")
+    public String delete(@PathVariable Integer id, @AuthenticationPrincipal UserDetail userDetail, Model model) {
+
+        ErrorKinds result = reportService.delete(id, userDetail);
+
+        if (ErrorMessage.contains(result)) {
+            model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));
+            model.addAttribute("report", reportService.findById(id));
+            return detail(id, model);
+        }
+
         return "redirect:/reports";
     }
 }

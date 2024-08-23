@@ -26,6 +26,10 @@ import lombok.Data;
 @SQLRestriction("delete_flg = false")
 public class Report {
 
+    @ManyToOne
+    @JoinColumn(name = "employee_code", referencedColumnName = "code", nullable = false)
+    private Employee employee;
+
 
     // ID
     @Id

@@ -2,11 +2,14 @@
 package com.techacademy.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.validator.constraints.Length;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -35,12 +38,16 @@ public class Employee {
         }
     }
 
+
+
+
     // ID
     @Id
     @Column(length = 10)
     @NotEmpty
     @Length(max = 10)
     private String code;
+
 
     // 名前
     @Column(length = 20, nullable = false)

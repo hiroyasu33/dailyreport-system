@@ -25,34 +25,71 @@ import com.techacademy.service.UserDetail;
 @RequestMapping("reports")
 public class ReportController {
 
-
-
     // 日報一覧画面
     @GetMapping
     public String list(Model model) {
 
+        model.addAttribute("listSize");
+        model.addAttribute("reportsList");
 
         return "reports/list";
     }
 
     // 日報詳細画面
     @GetMapping(value = "/1")
-    public String detail(@PathVariable String code, Model model) {
+    public String detail(Model model) {
 
+        model.addAttribute("report");
         return "reports/detail";
     }
 
-    /** 日報更新画面を表示 */
+    // 日報更新画面を表示
     @GetMapping("/1/update")
-    public String edit(@PathVariable("code") String code, Model model, Employee employee) {
+    public String edit(Model model, Report report) {
+        model.addAttribute("report");
         // 日報更新画面に遷移
         return "reports/update";
     }
 
- // 日報新規登録画面
+    // 日報更新処理
+    @PostMapping("/1/update")
+    public String update(@Validated Report report, BindingResult res, Model model) {
+
+     // 入力チェック
+        if (res.hasErrors()) {
+            return create(report);
+        }
+        // 一覧画面にリダイレクト
+        return "redirect:/reports";
+
+    }
+
+    // 日報新規登録画面
     @GetMapping(value = "/add")
-    public String create(@ModelAttribute Employee employee) {
+    public String create(@ModelAttribute Report report) {
 
         return "reports/new";
+    }
+
+    // 日報新規登録処理
+    @PostMapping(value = "/add")
+    public String add(@Validated Report report, BindingResult res, Model model) {
+
+
+
+        // 入力チェック
+        if (res.hasErrors()) {
+            return create(report);
+        }
+        // 一覧画面にリダイレクト
+        return "redirect:/reports";
+
+    }
+
+
+    // 従業員削除処理
+    @PostMapping(value = "/1/delete")
+    public String delete(@AuthenticationPrincipal UserDetail userDetail, Model model) {
+        return "redirect:/reports";
     }
 }

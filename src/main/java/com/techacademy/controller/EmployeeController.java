@@ -49,7 +49,7 @@ public class EmployeeController {
         return "employees/detail";
     }
 
-    /** 従業員更新画面を表示 */
+    // 従業員更新画面を表示
     @GetMapping("/{code}/update/")
     public String edit(@PathVariable("code") String code, Model model, Employee employee) {
         if (code != null) {
@@ -62,7 +62,7 @@ public class EmployeeController {
         return "employees/update";
     }
 
-    /** 従業員更新処理 */
+    // 従業員更新処理
     @PostMapping("/{code}/update/")
     public String update(@PathVariable("code") String code, @Validated Employee employee, BindingResult res,
             Model model) {

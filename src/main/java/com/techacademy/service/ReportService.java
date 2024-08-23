@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import com.techacademy.constants.ErrorKinds;
 import com.techacademy.entity.Report;
+import com.techacademy.repository.ReportRepository;
+
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -77,9 +78,6 @@ public class ReportService {
         return list;
     }
 
-    // 他のメソッド定義
-    public interface ReportRepository extends CrudRepository<Report, Integer> {
-    }
 
     // 1件を検索
     public Report findById(Integer id) {

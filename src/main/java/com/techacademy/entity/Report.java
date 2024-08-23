@@ -56,11 +56,6 @@ public class Report {
     @Length(max = 600)
     private String content;
 
-    // 社員番号
-    @Column(nullable = false)
-    private String employeeCode;
-
-
     // 削除フラグ(論理削除を行うため)
     @Column(columnDefinition="TINYINT", nullable = false)
     private boolean deleteFlg;

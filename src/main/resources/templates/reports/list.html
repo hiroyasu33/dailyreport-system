@@ -27,13 +27,12 @@
                                     </thead>
 
                                     <tbody>
-                                            <th>煌木　太郎</th>
-                                            <th>2023-09-06　07:27:28</th>
-                                            <th>タイトル</th>
-                                            <th><a href="/reports/1" class="btn btn-primary">詳細</a></th>
-
-
-
+                                        <tr th:each="report:${reportList}">
+                                            <td class="align-middle" th:text="${report.name}"></td>
+                                            <td class="align-middle" th:text="${report.reportDate}"></td>
+                                            <td class="align-middle" th:text="${report.title}"></td>
+                                            <td class="align-middle"><a th:href="@{/reports/{id}/(id=${report.id})}"
+                                                    class="btn btn-primary">詳細</a></td>
                                     </tbody>
                                 </table>
                             </div>

@@ -18,7 +18,7 @@ import com.techacademy.entity.Employee;
 import com.techacademy.entity.Report;
 import com.techacademy.service.ReportService;
 import com.techacademy.service.UserDetail;
-
+import com.techacademy.repository.ReportRepository;
 @Controller
 @RequestMapping("reports")
 public class ReportController {
@@ -29,6 +29,8 @@ public class ReportController {
     public ReportController(ReportService reportService) {
         this.reportService = reportService;
     }
+    @Autowired
+    private ReportRepository reportRepository;
 
     // 日報一覧画面
     @GetMapping
@@ -89,9 +91,10 @@ public class ReportController {
 
         if (report.getId() != null) {
             // ログイン中の従業員かつ入力した日付の日報データが存在する場合エラー
-            if(report.getReportDate() && Employee.loginUser());
+            if (reportRepository.findByReportDateAndEmployee(report.getReportDate(), userDetail.getEmployee()) != null)
             model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.DUPLICATE_ERROR),
                     ErrorMessage.getErrorValue(ErrorKinds.DUPLICATE_ERROR));
+            return create(report, userDetail, model);
         }
         Employee loginUser = userDetail.getEmployee(); //userDetail.getEmployee() ログインしている人の情報
         report.setEmployee(loginUser);
@@ -100,6 +103,8 @@ public class ReportController {
         return "redirect:/reports";
 
     }
+
+
 
 
     // 従業員削除処理

@@ -51,22 +51,30 @@ public class ReportController {
     }
 
     // 日報更新画面を表示
-    @GetMapping("/{id}/update")
+    @GetMapping("/{id}/update/")
     public String edit(@PathVariable("id") Integer id, Model model, Report report) {
         model.addAttribute("report", reportService.findById(id));
+
         // 日報更新画面に遷移
         return "reports/update";
     }
 
     // 日報更新処理
-    @PostMapping("/{id}/update")
-    public String update(@PathVariable("id") Integer id, @Validated Report report, BindingResult res, Model model) {
+    @PostMapping("/{id}/update/")
+    public String update(@PathVariable("id") Integer id, @Validated Report report, BindingResult res, Model model, @AuthenticationPrincipal UserDetail userDetail) {
 
      // 入力チェック
         if (res.hasErrors()) {
             return edit(id, model, report);
         }
 
+        // ログイン中の従業員かつ入力した日付の日報データが存在する場合エラー
+        Report existingReport = reportRepository.findByReportDateAndEmployee(report.getReportDate(), userDetail.getEmployee());
+        if (existingReport != null && !existingReport.getId().equals(report.getId())) {
+            model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.DATECHECK_ERROR),
+                    ErrorMessage.getErrorValue(ErrorKinds.DATECHECK_ERROR));
+            return edit(id, model, report);  // エラーメッセージを表示して再度入力画面に戻る
+        }
         reportService.update(report, id);
         // 一覧画面にリダイレクト
         return "redirect:/reports";
@@ -75,7 +83,7 @@ public class ReportController {
 
     // 日報新規登録画面
     @GetMapping(value = "/add")
-    public String create(@ModelAttribute Report report,@AuthenticationPrincipal UserDetail userDetail, Model model) {
+    public String create(@ModelAttribute Report report, Model model, @AuthenticationPrincipal UserDetail userDetail) {
         model.addAttribute("loginUser", userDetail.getEmployee());
         return "reports/new";
     }
@@ -86,17 +94,17 @@ public class ReportController {
 
         // 入力チェック
         if (res.hasErrors()) {
-            return create(report, userDetail, model);
+            return create(report,  model, userDetail);
         }
 
-        if (report.getId() != null) {
             // ログイン中の従業員かつ入力した日付の日報データが存在する場合エラー
-            if (reportRepository.findByReportDateAndEmployee(report.getReportDate(), userDetail.getEmployee()) != null)
-            model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.DUPLICATE_ERROR),
-                    ErrorMessage.getErrorValue(ErrorKinds.DUPLICATE_ERROR));
-            return create(report, userDetail, model);
+            if (reportRepository.findByReportDateAndEmployee(report.getReportDate(), userDetail.getEmployee()) != null) {
+            model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.DATECHECK_ERROR),
+                    ErrorMessage.getErrorValue(ErrorKinds.DATECHECK_ERROR));
+            return create(report, model, userDetail); // エラーメッセージを表示して再度入力画面に戻る
         }
-        Employee loginUser = userDetail.getEmployee(); //userDetail.getEmployee() ログインしている人の情報
+
+        Employee loginUser = userDetail.getEmployee(); //userDetail.getEmployee() ログインしている人の情報を取得を取得
         report.setEmployee(loginUser);
         reportService.save(report);
         // 一覧画面にリダイレクト

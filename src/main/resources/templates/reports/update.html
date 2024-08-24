@@ -18,7 +18,7 @@
                 <div class="col-xl-12">
                     <div class="card">
                         <div class="card-body">
-                            <form th:action="@{/reports/1/update}" th:object="${report}" th:method="post">
+                            <form th:action="@{/reports/{id}/update/(id=${report.id})}" th:object="${report}" th:method="post">
                                 <div class="wizard wizard-success mb-4">
                                     <div class="mb-3">
                                         <label class="form-label" for="report_date">日付</label>
@@ -31,7 +31,7 @@
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="name">氏名</label>
-                                        <p class="mb-1"></p>
+                                        <p class="align-middle" th:text="${report.employee.name}"></p>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label" for="title">タイトル</label>

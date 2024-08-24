@@ -18,6 +18,7 @@ import com.techacademy.constants.ErrorMessage;
 
 import com.techacademy.entity.Employee;
 import com.techacademy.service.EmployeeService;
+import com.techacademy.service.ReportService;
 import com.techacademy.service.UserDetail;
 
 @Controller
@@ -25,10 +26,12 @@ import com.techacademy.service.UserDetail;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final ReportService reportService;
 
     @Autowired
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService, ReportService reportService) {
         this.employeeService = employeeService;
+        this.reportService = reportService;
     }
 
     // 従業員一覧画面
@@ -152,7 +155,7 @@ public class EmployeeController {
     @PostMapping(value = "/{code}/delete")
     public String delete(@PathVariable String code, @AuthenticationPrincipal UserDetail userDetail, Model model) {
 
-        ErrorKinds result = employeeService.delete(code, userDetail);
+        ErrorKinds result = employeeService.delete(code, userDetail, reportService);
 
         if (ErrorMessage.contains(result)) {
             model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));

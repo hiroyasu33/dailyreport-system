@@ -1,7 +1,6 @@
 package com.techacademy.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,9 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.techacademy.constants.ErrorKinds;
 import com.techacademy.constants.ErrorMessage;
-
+import com.techacademy.entity.Employee;
 import com.techacademy.entity.Report;
-import com.techacademy.service.EmployeeService;
 import com.techacademy.service.ReportService;
 import com.techacademy.service.UserDetail;
 
@@ -43,7 +41,7 @@ public class ReportController {
     }
 
     // 日報詳細画面
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/{id}/")
     public String detail(@PathVariable Integer id, Model model) {
 
         model.addAttribute("report", reportService.findById(id));
@@ -64,7 +62,7 @@ public class ReportController {
 
      // 入力チェック
         if (res.hasErrors()) {
-            return create(report);
+            return edit(id, model, report);
         }
 
         reportService.update(report, id);
@@ -75,21 +73,29 @@ public class ReportController {
 
     // 日報新規登録画面
     @GetMapping(value = "/add")
-    public String create(@ModelAttribute Report report) {
-
+    public String create(@ModelAttribute Report report,@AuthenticationPrincipal UserDetail userDetail, Model model) {
+        model.addAttribute("loginUser", userDetail.getEmployee());
         return "reports/new";
     }
 
     // 日報新規登録処理
     @PostMapping(value = "/add")
-    public String add(@Validated Report report, BindingResult res, Model model) {
-
-
+    public String add(@Validated Report report, BindingResult res, Model model, @AuthenticationPrincipal UserDetail userDetail) {
 
         // 入力チェック
         if (res.hasErrors()) {
-            return create(report);
+            return create(report, userDetail, model);
         }
+
+        if (report.getId() != null) {
+            // ログイン中の従業員かつ入力した日付の日報データが存在する場合エラー
+            if(report.getReportDate() && Employee.loginUser());
+            model.addAttribute(ErrorMessage.getErrorName(ErrorKinds.DUPLICATE_ERROR),
+                    ErrorMessage.getErrorValue(ErrorKinds.DUPLICATE_ERROR));
+        }
+        Employee loginUser = userDetail.getEmployee(); //userDetail.getEmployee() ログインしている人の情報
+        report.setEmployee(loginUser);
+        reportService.save(report);
         // 一覧画面にリダイレクト
         return "redirect:/reports";
 
@@ -100,7 +106,7 @@ public class ReportController {
     @PostMapping(value = "/{id}/delete")
     public String delete(@PathVariable Integer id, @AuthenticationPrincipal UserDetail userDetail, Model model) {
 
-        ErrorKinds result = reportService.delete(id, userDetail);
+        ErrorKinds result = reportService.delete(id);
 
         if (ErrorMessage.contains(result)) {
             model.addAttribute(ErrorMessage.getErrorName(result), ErrorMessage.getErrorValue(result));

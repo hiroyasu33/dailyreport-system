@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.techacademy.constants.ErrorKinds;
+import com.techacademy.entity.Employee;
 import com.techacademy.entity.Report;
 import com.techacademy.repository.ReportRepository;
 
@@ -24,17 +25,16 @@ public class ReportService {
         this.reportRepository = reportRepository;
     }
 
-    // 従業員保存
+    // 日報保存
     @Transactional
     public ErrorKinds save(Report report) {
 
-        // 従業員番号重複チェック
-        if (findById(report.getId()) != null) {
-            return ErrorKinds.DUPLICATE_ERROR;
-        }
+        // 日報重複チェック
+//        if (findById(report.getId()) != null) {
+//            return ErrorKinds.DUPLICATE_ERROR;
+//        }
 
         report.setDeleteFlg(false);
-
         LocalDateTime now = LocalDateTime.now();
         report.setCreatedAt(now);
         report.setUpdatedAt(now);
@@ -60,7 +60,7 @@ public class ReportService {
 
     // 日報削除
     @Transactional
-    public ErrorKinds delete(Integer id, UserDetail userDetail) {
+    public ErrorKinds delete(Integer id) {
 
         Report report = findById(id);
         LocalDateTime now = LocalDateTime.now();
@@ -70,7 +70,7 @@ public class ReportService {
         return ErrorKinds.SUCCESS;
     }
 
-    // 従業員一覧表示処理
+    // 日報一覧表示処理
     public List<Report> findAll() {
         Iterable<Report> iterable = reportRepository.findAll();
         List<Report> list = new ArrayList<>();
@@ -86,6 +86,11 @@ public class ReportService {
         // 取得できなかった場合はnullを返す
         Report report = option.orElse(null);
         return report;
+    }
+
+    public List<Report> findByEmployee(Employee employee) {
+        // TODO 自動生成されたメソッド・スタブ
+        return reportRepository.findByEmployee(employee);
     }
 
 }

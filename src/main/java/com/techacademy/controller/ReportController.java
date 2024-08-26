@@ -96,11 +96,11 @@ public class ReportController {
     public String add(@Validated Report report, BindingResult res, Model model,
             @AuthenticationPrincipal UserDetail userDetail) {
 
-//        // 入力チェック
-//        if (res.hasErrors()) {
-//            // エラーがある場合は、再度編集画面に戻ります。
-//            return create(report, model, userDetail);
-//        }
+        // 入力チェック
+        if (res.hasErrors()) {
+            // エラーがある場合は、再度編集画面に戻ります。
+            return create(report, model, userDetail);
+        }
 
 
 

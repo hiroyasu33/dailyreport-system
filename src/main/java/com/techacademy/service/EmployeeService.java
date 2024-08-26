@@ -44,7 +44,6 @@ public class EmployeeService {
         }
 
         employee.setDeleteFlg(false);
-
         LocalDateTime now = LocalDateTime.now();
         employee.setCreatedAt(now);
         employee.setUpdatedAt(now);

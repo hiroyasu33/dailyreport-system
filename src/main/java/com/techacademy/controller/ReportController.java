@@ -1,7 +1,6 @@
 package com.techacademy.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -75,8 +74,12 @@ public class ReportController {
             // エラーがある場合は、再度編集画面に戻ります。
             return edit(id, model, report);
         }
-        // メソッドを呼び出して、レポートを更新します。
-        reportService.update(report, id, userDetail);
+        //　エラーを表示して編集画面に戻ります
+        ErrorKinds result = reportService.update(report, id, userDetail);
+        if (ErrorMessage.contains(result)) {
+            model.addAttribute(ErrorMessage.getErrorName(result),ErrorMessage.getErrorValue(result));
+            return edit(id, model, report);
+        }
         // 一覧画面にリダイレクト
         return "redirect:/reports";
 
@@ -106,7 +109,11 @@ public class ReportController {
 
         Employee loginUser = userDetail.getEmployee(); // メソッドを呼び出して、ログインユーザーの情報を取得し、それをレポートに設定します。
         report.setEmployee(loginUser);
-        reportService.save(report, userDetail); // メソッドを呼び出して、レポートを保存します。
+        ErrorKinds result = reportService.save(report, userDetail); // メソッドを呼び出して、レポートを保存します。エラー時にはエラーを表示
+        if (ErrorMessage.contains(result)) {
+            model.addAttribute(ErrorMessage.getErrorName(result),ErrorMessage.getErrorValue(result));
+            return create(report, model, userDetail);
+        }
         // 一覧画面にリダイレクト
         return "redirect:/reports";
 

@@ -28,12 +28,12 @@ public class ReportService {
 
     // 日報保存
     @Transactional
-    public ErrorKinds save(Report report,  @AuthenticationPrincipal UserDetail userDetail) {
+    public ErrorKinds save(Report report, @AuthenticationPrincipal UserDetail userDetail) {
 
-//     // ログイン中の従業員かつ入力した日付の日報データが存在する場合エラー
-//        if (reportRepository.findByReportDateAndEmployee(report.getReportDate(), userDetail.getEmployee()) != null) {
-//        return ErrorKinds.DATECHECK_ERROR; // エラーメッセージを表示して再度入力画面に戻る
-//    }
+        // ログイン中の従業員かつ入力した日付の日報データが存在する場合エラー
+        if (reportRepository.findByReportDateAndEmployee(report.getReportDate(), userDetail.getEmployee()) != null) {
+            return ErrorKinds.DATECHECK_ERROR; // エラーメッセージを表示して再度入力画面に戻る
+        }
 
         report.setDeleteFlg(false); // 削除フラグをfalseに設定します。
         LocalDateTime now = LocalDateTime.now(); // 現在の日時を取得
@@ -52,12 +52,15 @@ public class ReportService {
         // 指定されたidのレポートをデータベースから取得します。
         Report oldReport = findById(id);
         // 同じ日付とユーザーのレポートが既に存在するかを確認します。
-        Report existingReport = reportRepository.findByReportDateAndEmployee(report.getReportDate(), userDetail.getEmployee());
+        List<Report> existingReport = reportRepository.findByReportDateAndEmployee(report.getReportDate(),
+                userDetail.getEmployee());
         // もし存在する且つ閲覧中のデータ以外の場合、エラーメッセージを返します。
-        if (existingReport != null &&  existingReport.getId() != id) {
-            return ErrorKinds.DATECHECK_ERROR;
+        if (existingReport != null && !existingReport.isEmpty()) {
+            Report firstReport = existingReport.get(0);
+            if (firstReport.getId() != id) {
+                return ErrorKinds.DATECHECK_ERROR;
+            }
         }
-
         // oldReportの各フィールドを新しい値で更新します（setReportDate, setTitle, setContent）。
         oldReport.setReportDate(report.getReportDate());
         oldReport.setTitle(report.getTitle());
@@ -101,7 +104,6 @@ public class ReportService {
         return list;
     }
 
-
     // 1件を検索
     public Report findById(Integer id) {
         // findByIdで検索
@@ -110,6 +112,7 @@ public class ReportService {
         Report report = option.orElse(null);
         return report;
     }
+
     // 指定された従業員に関連するレポートのリストを返します。
     public List<Report> findByEmployee(Employee employee) {
         // 指定された従業員に関連するレポートをデータベースから取得し、そのリストを返します。

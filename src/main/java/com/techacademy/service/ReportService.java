@@ -31,8 +31,14 @@ public class ReportService {
     public ErrorKinds save(Report report, @AuthenticationPrincipal UserDetail userDetail) {
 
         // ログイン中の従業員かつ入力した日付の日報データが存在する場合エラー
-        if (reportRepository.findByReportDateAndEmployee(report.getReportDate(), userDetail.getEmployee()) != null) {
+        List<Report> list = findByEmployee(userDetail.getEmployee());
+        if(list != null) {
+            for(Report dupReport: list) {
+                if(dupReport.getReportDate().equals(report.getReportDate())) {
             return ErrorKinds.DATECHECK_ERROR; // エラーメッセージを表示して再度入力画面に戻る
+
+                }
+            }
         }
 
         report.setDeleteFlg(false); // 削除フラグをfalseに設定します。
